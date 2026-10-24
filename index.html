@@ -1,0 +1,418 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#F5F0E8"><style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style></head><body>
+<title>Find Your Evening</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+/* Find your evening: two questions, then the pieces made for that night, each shown untouched inside a studio arch.
+   One visual world by choice (the label's ivory, green and a whisper of gold), the same in any viewer theme.
+   Motion uses transform and opacity only, and every photo is decoded before it moves. */
+:root{
+  --paper:#F5F0E8; --paper2:#ECE4D7; --ink:#2A2824; --mut:#8A8176; --hair:rgba(42,40,36,.14);
+  --green:#2F4A48; --greend:#1F3331; --gold:#A67F38;
+  --display:'Cormorant Garamond',Georgia,'Times New Roman',serif; --body:'Jost','Helvetica Neue',Arial,sans-serif;
+  --gl:max(22px,env(safe-area-inset-left,0px)); --gr:max(22px,env(safe-area-inset-right,0px));
+  --top:env(safe-area-inset-top,0px); --bot:env(safe-area-inset-bottom,0px);
+  --ease:cubic-bezier(.16,1,.3,1);
+  color-scheme:light;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-weight:300;-webkit-font-smoothing:antialiased;
+  -webkit-tap-highlight-color:transparent;overscroll-behavior:none;text-rendering:optimizeLegibility}
+img{display:block;max-width:100%}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.k{font-weight:400;font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
+
+#app{position:fixed;inset:0;overflow:hidden}
+.scr{position:absolute;inset:0;display:flex;flex-direction:column;visibility:hidden;padding-top:calc(64px + var(--top));padding-bottom:calc(22px + var(--bot))}
+.scr.on{visibility:visible}
+.wrap{width:100%;max-width:520px;margin:0 auto;padding-left:var(--gl);padding-right:var(--gr)}
+.f{will-change:transform,opacity}
+
+/* top bar */
+.bar{position:fixed;top:0;left:0;right:0;z-index:30;height:calc(60px + var(--top));padding:var(--top) var(--gr) 0 var(--gl);display:grid;grid-template-columns:1fr auto 1fr;align-items:center}
+.mark{font-family:var(--display);font-weight:500;font-size:21px;color:var(--gold);letter-spacing:.02em;text-align:center}
+.ib{height:44px;display:flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;font-weight:400;color:var(--ink);transition:opacity .4s}
+.ib svg{width:18px;height:18px}
+.ib.r{justify-self:end}
+.ib.off{opacity:0;pointer-events:none}
+.steps{position:absolute;left:50%;bottom:-2px;transform:translateX(-50%);display:flex;gap:6px;transition:opacity .4s}
+.steps i{width:18px;height:1px;background:var(--hair);transition:background .5s}
+.steps i.on{background:var(--gold)}
+.steps.off{opacity:0}
+
+/* WELCOME */
+.intro{align-items:center;justify-content:space-between;text-align:center}
+.hero-arch{position:relative;width:min(62vw,300px);aspect-ratio:3/4.3;max-height:46svh;border-radius:999px 999px 0 0;overflow:hidden;background:var(--paper2);margin-top:2svh}
+.hero-arch img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0}
+.intro h1{font-family:var(--display);font-weight:400;font-size:clamp(46px,13.5vw,84px);line-height:1;letter-spacing:-.005em}
+.intro h1 em{font-style:italic}
+.intro .sub{margin-top:14px;font-size:14px;color:var(--mut);letter-spacing:.02em}
+.cta{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;height:56px;border-radius:40px;background:var(--green);color:#F5F0E8;
+  font-size:11.5px;letter-spacing:.3em;text-transform:uppercase;font-weight:400;text-decoration:none;transition:transform .3s var(--ease),background .3s}
+.cta:active{transform:scale(.98)}
+.cta svg{width:17px;height:17px;flex:none}
+
+/* QUESTIONS */
+.q .wrap{flex:1;display:flex;flex-direction:column;justify-content:center;padding-bottom:6svh}
+.q h2{font-family:var(--display);font-weight:400;font-size:clamp(40px,11vw,60px);line-height:1.02}
+.q h2 em{font-style:italic}
+.list{margin-top:4.5svh}
+.opt{position:relative;width:100%;display:flex;align-items:center;justify-content:space-between;padding:clamp(11px,2.2svh,18px) 0;border-bottom:1px solid var(--hair);text-align:left}
+.opt:first-child{border-top:1px solid var(--hair)}
+.opt .t{font-family:var(--display);font-size:clamp(28px,7.6vw,36px);font-weight:400;line-height:1.1;transition:transform .5s var(--ease),color .3s}
+.opt .dot{width:8px;height:8px;border-radius:50%;border:1px solid var(--mut);transition:background .3s,border-color .3s,transform .5s var(--ease)}
+.opt.pick .t{transform:translateX(10px);color:var(--green)}
+.opt.pick .dot{background:var(--green);border-color:var(--green);transform:scale(1.4)}
+@media(hover:hover){.opt:hover .dot{border-color:var(--gold)}}
+.moods{margin-top:4.5svh;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.mood{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center}
+.mood .a{position:relative;width:100%;aspect-ratio:3/5.6;max-height:48svh;border-radius:999px 999px 0 0;overflow:hidden;background:var(--paper2);transition:transform .5s var(--ease)}
+.mood .a img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.2s ease}
+.mood .a img.on{opacity:1}
+.mood .t{font-family:var(--display);font-size:clamp(24px,6.4vw,30px);font-weight:400;line-height:1}
+.mood.pick .a{transform:scale(.96)}
+.mood.pick .t{color:var(--green)}
+
+/* RESULT */
+.result{padding-left:0;padding-right:0}
+.track{flex:1;min-height:0;display:flex;align-items:center;gap:16px;overflow-x:auto;overflow-y:hidden;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;
+  padding-inline:calc((100vw - var(--cw)) / 2);--cw:min(70vw,340px,calc((100svh - 300px) * .66))}
+.track::-webkit-scrollbar{display:none}
+.card{flex:none;width:var(--cw);scroll-snap-align:center;scroll-snap-stop:always}
+.arch{position:relative;width:100%;aspect-ratio:3/4.55;border-radius:999px 999px 0 0;overflow:hidden;background:var(--paper2);transform-origin:50% 100%;will-change:transform}
+.arch img{position:absolute;top:0;bottom:0;left:-9%;width:118%;max-width:none;height:100%;object-fit:cover;will-change:transform}
+.arch .plus{position:absolute;right:12px;bottom:12px;width:34px;height:34px;border-radius:50%;background:rgba(245,240,232,.86);display:grid;place-items:center;color:var(--ink)}
+.arch .plus svg{width:14px;height:14px}
+.info{text-align:center;padding:18px var(--gr) 0 var(--gl);min-height:112px}
+.info .k{min-height:14px}
+.info h3{font-family:var(--display);font-weight:400;font-size:clamp(38px,10.5vw,52px);line-height:1;margin-top:8px;letter-spacing:.01em}
+.info h3 .ch{display:inline-block}
+.info .cat{margin-top:8px;font-size:12px;letter-spacing:.06em;color:var(--mut)}
+.foot{padding:12px var(--gr) 0 var(--gl)}
+.dots{display:flex;justify-content:center;gap:7px;margin-bottom:14px}
+.dots i{width:5px;height:5px;border-radius:3px;background:rgba(42,40,36,.2);transition:background .4s,width .4s var(--ease)}
+.dots i.on{background:var(--gold);width:16px}
+.allbtn{display:block;margin:10px auto 0;height:34px;font-size:10.5px;letter-spacing:.28em;text-transform:uppercase;color:var(--mut)}
+
+/* colour wipe between the questions and the reveal */
+.wipe{position:fixed;z-index:40;left:0;top:0;width:10px;height:10px;border-radius:50%;pointer-events:none;transform:scale(0);will-change:transform,opacity}
+
+/* close-up */
+.zoom{position:fixed;inset:0;z-index:50;background:#14130F;visibility:hidden;opacity:0;transition:opacity .45s ease,visibility .45s}
+.zoom.on{visibility:visible;opacity:1}
+.zoom img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.1);will-change:transform}
+.zoom.on img{transform:scale(1);transition:transform 9s cubic-bezier(.2,.6,.2,1)}
+.zoom .shade{position:absolute;left:0;right:0;bottom:0;height:46%;background:linear-gradient(to top,rgba(20,19,15,.82),rgba(20,19,15,0))}
+.zoom .txt{position:absolute;left:var(--gl);right:var(--gr);bottom:calc(30px + var(--bot));color:#F5F0E8}
+.zoom .txt h4{font-family:var(--display);font-weight:400;font-size:40px;line-height:1}
+.zoom .txt p{margin-top:12px;font-size:14.5px;line-height:1.6;color:#E8E1D5;max-width:36ch}
+.zoom .x{position:absolute;right:var(--gr);top:calc(10px + var(--top));width:44px;height:44px;border-radius:50%;background:rgba(20,19,15,.45);color:#F5F0E8;display:grid;place-items:center}
+.zoom .x svg{width:16px;height:16px}
+
+/* all pieces */
+.grid{position:fixed;inset:0;z-index:45;background:var(--paper);visibility:hidden;opacity:0;transform:translateY(24px);transition:opacity .45s ease,transform .6s var(--ease),visibility .45s;overflow-y:auto;-webkit-overflow-scrolling:touch;
+  padding:calc(70px + var(--top)) var(--gr) calc(30px + var(--bot)) var(--gl)}
+.grid.on{visibility:visible;opacity:1;transform:none}
+.grid h2{font-family:var(--display);font-weight:400;font-size:36px;text-align:center}
+.gg{margin:22px auto 0;max-width:560px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px 12px}
+.gg button{display:flex;flex-direction:column;align-items:center;gap:8px}
+.gg .a{width:100%;aspect-ratio:3/4.4;border-radius:999px 999px 0 0;overflow:hidden;background:var(--paper2)}
+.gg img{width:100%;height:100%;object-fit:cover}
+.gg span{font-family:var(--display);font-size:19px}
+.grid .x{position:fixed;right:var(--gr);top:calc(8px + var(--top));width:44px;height:44px;display:grid;place-items:center}
+.grid .x svg{width:16px;height:16px}
+
+@media(min-width:900px){.track{--cw:min(30vw,360px,calc((100svh - 300px) * .66))}}
+@media(prefers-reduced-motion:reduce){.zoom.on img{transition:none}}
+</style>
+
+<div id="app">
+  <header class="bar">
+    <button class="ib off" id="back" type="button" aria-label="Back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M15 5l-7 7 7 7"/></svg>Back</button>
+    <div class="mark" aria-label="Sonali Garg Label">Sg</div>
+    <button class="ib r off" id="again" type="button">Start again</button>
+    <div class="steps off" id="steps"><i></i><i></i></div>
+  </header>
+
+  <section class="scr intro on" id="s-intro" aria-label="Welcome">
+    <div class="hero-arch f" id="heroArch"></div>
+    <div class="wrap">
+      <h1 class="f">Find your <em>evening</em></h1>
+      <p class="sub f">Two questions. One piece, made for your night.</p>
+    </div>
+    <div class="wrap"><button class="cta f" id="begin" type="button">Begin</button></div>
+  </section>
+
+  <section class="scr q" id="s-occasion" aria-label="Which evening">
+    <div class="wrap">
+      <h2 class="f">Which <em>evening?</em></h2>
+      <div class="list" id="occ"></div>
+    </div>
+  </section>
+
+  <section class="scr q" id="s-mood" aria-label="Which mood">
+    <div class="wrap">
+      <h2 class="f">And the <em>mood?</em></h2>
+      <div class="moods" id="moods"></div>
+    </div>
+  </section>
+
+  <section class="scr result" id="s-result" aria-label="Your pieces">
+    <div class="track" id="track"></div>
+    <div class="info" id="info"><div class="k" id="r-k"></div><h3 id="r-name"></h3><div class="cat" id="r-cat"></div></div>
+    <div class="foot wrap">
+      <div class="dots" id="dots"></div>
+      <a class="cta" id="ask" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 1.8a8.2 8.2 0 0 1 0 16.4 8 8 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 0 1 12 3.8Zm-3 4.4c-.2 0-.5 0-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.2 5 4.3 2.5 1 3 .8 3.5.7.6-.1 1.7-.7 2-1.4.2-.7.2-1.3.1-1.4l-.5-.3-2-.9c-.3-.1-.5-.2-.7.2l-.9 1.1c-.2.2-.3.2-.6.1a6.7 6.7 0 0 1-3.4-3c-.3-.4 0-.5.1-.7l.5-.6.3-.5v-.5l-.9-2.2c-.2-.5-.5-.5-.7-.5h-.6Z"/></svg><span id="asktxt">Ask about this piece</span></a>
+      <button class="allbtn" id="allbtn" type="button">See all pieces</button>
+    </div>
+  </section>
+</div>
+
+<div class="wipe" id="wipe"></div>
+<div class="zoom" id="zoom" role="dialog" aria-modal="true"><img id="z-img" alt=""><div class="shade"></div>
+  <div class="txt"><h4 id="z-name"></h4><p id="z-line"></p></div>
+  <button class="x" id="zx" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+<div class="grid" id="grid" role="dialog" aria-modal="true" aria-label="All pieces">
+  <button class="x" id="gx" type="button" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+  <h2>The <em>collection</em></h2><div class="gg" id="gg"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+(function(){
+const WA='https://wa.me/917011670108?text=';
+/* The pieces: names, categories, colours and lines from the lookbook. occ = how well a piece suits each evening (3 best),
+   mood = primary (2) and secondary (1). The occasion and mood tags are a first draft for Sonali to correct. */
+const P=[
+ ['noor','Noor','Pre-draped saree','#D9B7B0','A whisper-soft blush drape lit with frost-silver thread; the embroidered bodice catches light like morning dew.',{mehendi:3,engagement:2,sangeet:1},{soft:2,classic:1}],
+ ['anaar','Anaar','Ruffle saree','#7E1420','Deep pomegranate in imported crepe and net, falling in soft ruffles. A saree made for grand entrances.',{sangeet:3,reception:2},{bold:2}],
+ ['neelofar','Neelofar','Drape gown','#9FB0C4','Powder-blue crepe, draped clean and column-straight. Quiet, architectural and entirely modern.',{cocktail:3,engagement:2},{classic:2,soft:1}],
+ ['sadaf','Sadaf','Pre-stitched saree','#EDE4D3','An ivory pre-stitched saree worked in pearl and sequin. Luminous, fuss-free and endlessly elegant.',{engagement:3,reception:2,cocktail:1},{classic:2,soft:1}],
+ ['sitara','Sitara','Cocktail gown','#BAB7B1','A silver constellation of crystals over a sculpted bodice; drama held with a very steady hand.',{reception:3,cocktail:2,engagement:1,sangeet:1},{bold:2,classic:1}],
+ ['gulaab','Gulaab','Pre-draped saree','#E7C5C4','Powder-rose chiffon over a hand-embellished bodice. Romance in its most weightless form.',{engagement:3,mehendi:2},{soft:2}],
+ ['kasturi','Kasturi','Pre-draped saree','#C9A19A','Rosewood embroidery on a dusk-pink drape; earthy, intricate and warm as candlelight.',{engagement:2,sangeet:2,reception:1},{classic:2,soft:1}],
+ ['chandni','Chandni','Drape gown','#C8C6C2','Liquid silver poured into a floor-sweeping drape gown. Moonlight you can wear.',{cocktail:3,reception:2},{bold:2,classic:1}],
+ ['firoza','Firoza','Kaftan kurta set','#1F6E77','A turquoise kaftan-kurta with a hand-worked panel and heirloom tassels; ease, dressed for occasion.',{festive:3,mehendi:2},{bold:2}],
+ ['maati','Maati','Printed lehenga','#6E4A2F','Earth-toned hand-print on flowing georgette, edged in black. Folk soul with a festive finish.',{mehendi:3,sangeet:2,festive:1},{classic:2,bold:1}],
+ ['shaam','Shaam','Asymmetric organza tunic set','#B7A2B0','An asymmetric organza tunic set in dusk-mauve. Sheer, sculptural and quietly directional.',{cocktail:3,festive:1},{soft:2,classic:1}],
+ ['zaitoon','Zaitoon','Bandeau jumpsuit','#6B6A32','Olive satin cut as a bandeau jumpsuit. One long, fluid line from shoulder to hem.',{cocktail:3},{classic:2,bold:1}],
+ ['mehroon','Mehroon','Wrap gown','#5C2230','A wine wrap gown in fluid satin, tied at the waist. Deep, glossy and effortlessly grown-up.',{cocktail:3,reception:1},{classic:2,bold:1}],
+ ['dhuaan','Dhuaan','Drape gown','#8E8E90','Smoke-grey drape gown with sequinned sleeves. Cool metallic restraint, lit softly from within.',{cocktail:3,sangeet:2,reception:1},{classic:2,bold:1}],
+ ['nazneen','Nazneen','Floor-length anarkali','#B7A4CE','A floor-length lilac anarkali in yards of georgette, cinched with an embellished waist and a sheer fall.',{mehendi:3,engagement:2},{soft:2}],
+ ['nazaakat','Nazaakat','Pre-stitched drape saree','#E7C6C7','Blush petal-pink, pre-stitched and pre-draped. Softness that carries its own quiet confidence.',{engagement:3,mehendi:2},{soft:2,classic:1}],
+ ['hariyali','Hariyali','Kurta set','#2E5A46','Emerald silk with a heritage embroidered panel. A kurta set that reads rich and wears easy.',{festive:3,mehendi:2},{classic:2,bold:1}],
+ ['gulistan','Gulistan','Lehenga','#E8A97E','Peach and rose in full bloom. A lehenga with a printed bodice and an airy dupatta.',{mehendi:3,sangeet:2},{soft:2,bold:1}],
+ ['shiraz','Shiraz','Kurta set','#7A2A3A','Wine-hued silk, densely embroidered at the yoke and cooled by a bottle-green dupatta.',{festive:3,reception:2},{classic:2,bold:1}],
+ ['raatrani','Raat Rani','Kalidar suit','#232228','A midnight kalidar suit edged in gold. Nocturnal, regal and impossible to overlook.',{festive:2,sangeet:2,reception:2,cocktail:1},{bold:2,classic:1}],
+ ['jamun','Jamun','Lehenga','#4A2352','Jewel-purple worked in gold motifs, lifted by a scarlet dupatta. The full royal register.',{sangeet:3,reception:2},{bold:2}],
+ ['ishq','Ishq','Draped saree','#B02428','A red draped saree built for movement; soft georgette that follows every step.',{sangeet:3,reception:2,cocktail:1},{bold:2}],
+ ['genda','Genda','Suit set','#C98A2E','Marigold-gold with fine zari and thread work. Festive warmth in a celebratory suit set.',{festive:3,mehendi:2},{bold:2}],
+ ['rangeeli','Rangeeli','Lehenga','#C21A5A','Vivid pink silk with a bandhani-dyed, fully embroidered dupatta. Bright, spirited and celebratory.',{mehendi:3,sangeet:3,festive:1},{bold:2}],
+ ['gulaal','Gulaal','Suit set','#C0246A','Fuchsia paired with traditional bandhani. A suit set that balances craft with everyday grace.',{festive:3,mehendi:2},{bold:2,classic:1}]
+].map(a=>({k:a[0],n:a[1],cat:a[2],c:a[3],line:a[4],occ:a[5],mood:a[6]}));
+const FOCAL={"noor":{"cx":0.57,"top":0.109,"w":928,"h":1152},"anaar":{"cx":0.512,"top":0.152,"w":928,"h":1152},"neelofar":{"cx":0.532,"top":0.158,"w":928,"h":1152},"sadaf":{"cx":0.604,"top":0.155,"w":896,"h":1195},"sitara":{"cx":0.504,"top":0.109,"w":928,"h":1152},"gulaab":{"cx":0.567,"top":0.133,"w":928,"h":1152},"kasturi":{"cx":0.617,"top":0.184,"w":928,"h":1152},"chandni":{"cx":0.548,"top":0.102,"w":928,"h":1152},"firoza":{"cx":0.513,"top":0.327,"w":1280,"h":1600},"maati":{"cx":0.485,"top":0.258,"w":900,"h":1600},"shaam":{"cx":0.556,"top":0.125,"w":928,"h":1152},"zaitoon":{"cx":0.468,"top":0.109,"w":1280,"h":1600},"mehroon":{"cx":0.522,"top":0.052,"w":1280,"h":1600},"dhuaan":{"cx":0.495,"top":0.166,"w":768,"h":917},"nazneen":{"cx":0.499,"top":0.281,"w":1280,"h":1600},"nazaakat":{"cx":0.567,"top":0.255,"w":1280,"h":1600},"hariyali":{"cx":0.548,"top":0.317,"w":1280,"h":1600},"gulistan":{"cx":0.52,"top":0.18,"w":1280,"h":1600},"shiraz":{"cx":0.607,"top":0.433,"w":900,"h":1600},"raatrani":{"cx":0.525,"top":0.181,"w":900,"h":1600},"jamun":{"cx":0.474,"top":0.236,"w":1280,"h":1600},"ishq":{"cx":0.567,"top":0.159,"w":900,"h":1600},"genda":{"cx":0.598,"top":0.223,"w":900,"h":1600},"rangeeli":{"cx":0.55,"top":0.15,"w":900,"h":1600},"gulaal":{"cx":0.662,"top":0.216,"w":1280,"h":1600}};
+P.forEach(p=>Object.assign(p,FOCAL[p.k]));
+const OCC=[['mehendi','Mehendi','a mehendi'],['sangeet','Sangeet','a sangeet'],['engagement','Engagement','an engagement'],['cocktail','Cocktail','a cocktail evening'],['reception','Reception','a reception'],['festive','Festive days','a festive day']];
+const MOOD=[['soft','Soft'],['bold','Bold'],['classic','Classic']];
+
+const $=id=>document.getElementById(id);
+const G=window.gsap, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches||!G;
+const src=(p,t)=>'img/'+p.k+(t?'_'+t:'')+'.jpg';
+const timeout=(p,ms)=>Promise.race([p,new Promise(r=>setTimeout(r,ms))]);
+const cache={}, decoded={};
+function ready(url){ // load and decode before anything moves
+  if(!cache[url]){const i=new Image();i.decoding='async';
+    cache[url]=new Promise(res=>{i.onload=()=>{(i.decode?timeout(i.decode().catch(()=>0),900):Promise.resolve()).then(()=>{decoded[url]=i;res(i)})};i.onerror=()=>res(i)});i.src=url}
+  return cache[url];
+}
+/* centre the model inside any frame: object-position from where she stands */
+function pos(p,frameW,frameH){
+  const s=Math.max(frameW/p.w,frameH/p.h), dw=p.w*s, dh=p.h*s;
+  const x=dw>frameW+1?Math.min(1,Math.max(0,(p.cx*dw-frameW/2)/(dw-frameW))):.5;
+  const y=dh>frameH+1?Math.min(1,Math.max(0,(p.top*dh-frameH*.13)/(dh-frameH))):0;   // her head just under the arch's curve
+  return (x*100).toFixed(1)+'% '+(y*100).toFixed(1)+'%';
+}
+
+/* ---------- welcome: one arch, the collection slowly passing through it ---------- */
+const heroOrder=['nazneen','anaar','sadaf','jamun','neelofar','gulistan','sitara','hariyali'].map(k=>P.find(p=>p.k===k));
+const ha=$('heroArch'); let heroIdx=0, heroTimer=null;
+heroOrder.forEach(p=>{const i=document.createElement('img');i.alt='';i.dataset.k=p.k;ha.appendChild(i)});
+function heroSet(i){
+  const p=heroOrder[i], el=ha.children[i], r=ha.getBoundingClientRect();
+  ready(src(p)).then(()=>{
+    if(!el.src)el.src=src(p); el.style.objectPosition=pos(p,r.width,r.height);
+    if(reduce){[...ha.children].forEach(c=>c.style.opacity=c===el?1:0);return}
+    G.set(el,{zIndex:2});[...ha.children].forEach(c=>{if(c!==el)G.set(c,{zIndex:1})});
+    G.fromTo(el,{opacity:0,scale:1.08},{opacity:1,duration:1.6,ease:'power1.inOut'});
+    G.to(el,{scale:1,duration:6.5,ease:'none',overwrite:false});
+    ready(src(heroOrder[(i+1)%heroOrder.length]));
+  });
+}
+function heroStart(){heroStop();heroSet(heroIdx);if(!reduce)heroTimer=setInterval(()=>{heroIdx=(heroIdx+1)%heroOrder.length;heroSet(heroIdx)},4200)}
+function heroStop(){if(heroTimer)clearInterval(heroTimer);heroTimer=null}
+
+/* ---------- questions ---------- */
+$('occ').innerHTML=OCC.map(o=>'<button class="opt f" type="button" data-v="'+o[0]+'"><span class="t">'+o[1]+'</span><span class="dot"></span></button>').join('');
+const moodPieces=m=>P.filter(p=>p.mood[m]===2);
+$('moods').innerHTML=MOOD.map(m=>'<button class="mood f" type="button" data-v="'+m[0]+'"><span class="a">'+moodPieces(m[0]).map(p=>'<img alt="" data-src="'+src(p,'t')+'">').join('')+'</span><span class="t">'+m[1]+'</span></button>').join('');
+let moodTimer=null;
+function moodShow(){ // each mood card slowly cycles through the pieces it leads to
+  const cards=[...document.querySelectorAll('.mood .a')];
+  cards.forEach(a=>{const ims=[...a.children];ims.forEach(i=>{if(!i.src)i.src=i.dataset.src});ims[0].classList.add('on');a.dataset.i=0});
+  clearInterval(moodTimer); if(reduce)return;
+  let t=0; moodTimer=setInterval(()=>{const a=cards[t%cards.length];const ims=[...a.children];let i=+a.dataset.i;ims[i].classList.remove('on');i=(i+1)%ims.length;ims[i].classList.add('on');a.dataset.i=i;t++},1100);
+}
+
+/* ---------- state and screens ---------- */
+const S={screen:'intro',occ:null,mood:null,deck:[],free:false,idx:0};
+const scr={intro:$('s-intro'),occasion:$('s-occasion'),mood:$('s-mood'),result:$('s-result')};
+let busy=false;
+function chrome(n){
+  $('back').classList.toggle('off',n==='intro'); $('again').classList.toggle('off',n!=='result');
+  $('steps').classList.toggle('off',!(n==='occasion'||n==='mood'));
+  [...$('steps').children].forEach((d,i)=>d.classList.toggle('on',n==='mood'||(n==='occasion'&&i===0)));
+}
+function enterEls(el){return el.querySelectorAll('.f')}
+function show(n,opts={}){
+  const from=scr[S.screen], to=scr[n]; if(from===to)return;
+  busy=true; S.screen=n; chrome(n);
+  if(!opts.silent){try{history.pushState({s:n},'')}catch(e){}}
+  Object.values(scr).forEach(el=>{if(el!==from&&el!==to)el.classList.remove('on')});
+  to.querySelectorAll('.pick').forEach(b=>b.classList.remove('pick'));
+  if(n==='intro')heroStart();else heroStop();
+  if(n==='mood')moodShow();else clearInterval(moodTimer);
+  const done=()=>{from.classList.remove('on');busy=false};
+  if(reduce){to.classList.add('on');done();return}
+  const outs=enterEls(from);
+  const enter=()=>{done();G.set(outs,{clearProps:'transform,opacity'});to.classList.add('on');
+    G.fromTo(enterEls(to),{y:22,opacity:0},{y:0,opacity:1,duration:.9,stagger:.055,ease:'expo.out',clearProps:'transform'})};
+  if(!outs.length||!from.classList.contains('on')){enter();return}
+  G.to(outs,{y:-14,opacity:0,duration:.3,stagger:.02,ease:'power2.in',onComplete:enter});
+}
+function match(){
+  const sc=p=>(p.occ[S.occ]||0)*2+(p.mood[S.mood]||0)*2.5;
+  return P.map((p,i)=>({p,s:sc(p),i})).sort((a,b)=>b.s-a.s||a.i-b.i).slice(0,3).map(x=>x.p);
+}
+$('begin').addEventListener('click',()=>{if(!busy)show('occasion')});
+$('occ').addEventListener('click',e=>{const b=e.target.closest('.opt');if(!b||busy)return;busy=true;S.occ=b.dataset.v;b.classList.add('pick');
+  P.filter(p=>(p.occ[S.occ]||0)>=2).forEach(p=>ready(src(p)));setTimeout(()=>{busy=false;show('mood')},reduce?0:460)});
+$('moods').addEventListener('click',e=>{const b=e.target.closest('.mood');if(!b||busy)return;busy=true;S.mood=b.dataset.v;b.classList.add('pick');
+  S.free=false;S.deck=match();const r=b.getBoundingClientRect();reveal(r.left+r.width/2,r.top+r.height/2)});
+
+/* ---------- the reveal ---------- */
+const track=$('track'), info=$('info');
+const ICON_PLUS='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 5v14M5 12h14"/></svg>';
+function buildDeck(){
+  const items=S.deck.map((p,i)=>'<div class="card" data-i="'+i+'"><button class="arch" type="button" aria-label="'+p.n+', see the detail"><img alt="'+p.n+', '+p.cat.toLowerCase()+'" src="'+src(p)+'"><span class="plus">'+ICON_PLUS+'</span></button></div>');
+  items.push('<div class="card end" data-i="'+S.deck.length+'"><div class="arch"><img alt="The Sonali Garg Label studio in Gurugram" src="img/studio.jpg"></div></div>');
+  track.innerHTML=items.join('');
+  track.querySelectorAll('.arch img').forEach(old=>{const c=decoded[old.getAttribute('src')]; // reuse the already-decoded photo: no decode hitch
+    if(c&&!c.isConnected){c.alt=old.alt;old.replaceWith(c)}});
+  $('dots').innerHTML=S.deck.concat([0]).map(()=>'<i></i>').join('');
+  track.scrollLeft=0; S.idx=-1; measure(); fitAll(); setActive(0,true); parallax();
+}
+let cards=[], cw=0, gap=16;
+function measure(){cards=[...track.children];const c=cards[0];cw=c?c.getBoundingClientRect().width:0;gap=parseFloat(getComputedStyle(track).columnGap)||16}
+function fitAll(){cards.forEach((c,i)=>{const p=S.deck[i];const img=c.querySelector('img');const a=c.querySelector('.arch').getBoundingClientRect();
+  if(p)img.style.objectPosition=pos(p,a.width*1.18,a.height);else img.style.objectPosition='50% 40%'})}
+function words(p){
+  if(!p)return{k:'Gurugram · By appointment',n:'The studio',cat:'Try them on, with the time entirely yours',ask:'Book a private viewing',msg:"Hi, I'd like to book a private viewing."};
+  const o=OCC.find(x=>x[0]===S.occ), m=MOOD.find(x=>x[0]===S.mood);
+  if(S.free)return{k:'From the collection',n:p.n,cat:p.cat,ask:'Ask about '+p.n,msg:"Hi, I'd love to know more about "+p.n+"."};
+  return{k:(S.idx===0?'Your ':'Also for your ')+o[1].toLowerCase().replace('festive days','festive day'),n:p.n,cat:p.cat,ask:'Ask about '+p.n,
+    msg:"Hi, I'd love to know more about "+p.n+". It's for "+o[2]+", and I'd like something "+m[1].toLowerCase()+"."};
+}
+function writeInfo(i){
+  const w=words(S.deck[i]); $('r-k').textContent=w.k;
+  const h=$('r-name'); h.textContent=''; h.setAttribute('aria-label',w.n); [...w.n].forEach(ch=>{const s=document.createElement('span');s.className='ch';s.textContent=ch===' '?' ':ch;h.appendChild(s)});
+  $('r-cat').textContent=w.cat; $('asktxt').textContent=w.ask; $('ask').href=WA+encodeURIComponent(w.msg);
+  [...$('dots').children].forEach((d,j)=>d.classList.toggle('on',j===i));
+}
+function setActive(i,instant){
+  if(i===S.idx)return; S.idx=i;
+  if(instant||reduce){writeInfo(i);return}
+  G.killTweensOf(info.children); writeInfo(i);
+  G.fromTo(info.children,{opacity:0,y:8},{opacity:1,y:0,duration:.6,stagger:.05,ease:'expo.out'});
+}
+let raf=0, settle=0;
+function parallax(){raf=0; if(!cards.length)return;
+  const mid=track.scrollLeft+track.clientWidth/2, step=cw+gap;
+  cards.forEach((c,i)=>{const center=c.offsetLeft+cw/2; const d=(center-mid)/step; const cl=Math.max(-1.2,Math.min(1.2,d));
+    c.firstElementChild.style.transform='scale('+(1-Math.min(1,Math.abs(cl))*.07).toFixed(4)+')';
+    c.querySelector('img').style.transform='translate3d('+(cl*-7).toFixed(2)+'%,0,0)'});
+  const i=Math.max(0,Math.min(cards.length-1,Math.round((track.scrollLeft)/step))); setActive(i);
+}
+track.addEventListener('scroll',()=>{if(!raf)raf=requestAnimationFrame(parallax);clearTimeout(settle);settle=setTimeout(()=>{if(raf)cancelAnimationFrame(raf);parallax()},140)},{passive:true});
+track.addEventListener('scrollend',()=>{if(raf)cancelAnimationFrame(raf);parallax()});
+addEventListener('resize',()=>{if(S.screen==='result'){measure();fitAll();parallax()}});
+
+function reveal(x,y){
+  const first=S.deck[0];
+  const loads=Promise.all(S.deck.map(p=>ready(src(p))).concat([ready('img/studio.jpg')]));
+  if(reduce){buildDeck();scr[S.screen].classList.remove('on');S.screen='result';chrome('result');scr.result.classList.add('on');busy=false;try{history.pushState({s:'result'},'')}catch(e){}return}
+  const wipe=$('wipe'), R=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y))/5;
+  G.set(wipe,{x:x-5,y:y-5,scale:0,opacity:1,background:first.c});
+  const grow=G.to(wipe,{scale:R,duration:.8,ease:'power3.inOut'});
+  Promise.all([timeout(loads,3500),new Promise(r=>grow.eventCallback('onComplete',r))]).then(()=>{
+    const from=scr[S.screen]; from.classList.remove('on'); heroStop(); clearInterval(moodTimer);
+    S.screen='result'; chrome('result'); try{history.pushState({s:'result'},'')}catch(e){}
+    scr.result.classList.add('on'); buildDeck();
+    const a=cards[0].firstElementChild, img=a.querySelector('img');
+    G.set(info.children,{opacity:0,y:12}); G.set('#s-result .foot',{opacity:0,y:12}); G.set(cards.slice(1),{opacity:0,x:40});
+    G.set(a,{y:50,opacity:0}); G.set(img,{scale:1.16});
+    const tl=G.timeline({onComplete:()=>{busy=false;warm()}});
+    tl.to(wipe,{opacity:0,duration:.7,ease:'power1.out'})
+      .to(a,{y:0,opacity:1,duration:1.3,ease:'expo.out'},.05)
+      .to(img,{scale:1,duration:2.2,ease:'expo.out',clearProps:'scale'},.05)
+      .to(info.children,{opacity:1,y:0,duration:.8,stagger:.07,ease:'expo.out'},.45)
+      .fromTo('#r-name .ch',{opacity:0,y:'.3em'},{opacity:1,y:0,duration:.8,stagger:.045,ease:'expo.out'},.5)
+      .to(cards.slice(1),{opacity:1,x:0,duration:1.1,stagger:.08,ease:'expo.out'},.7)
+      .to('#s-result .foot',{opacity:1,y:0,duration:.8,ease:'expo.out'},.8);
+  });
+}
+
+/* quietly prepare the collection's thumbnails and these pieces' close-ups once the reveal has settled */
+function warm(){const run=()=>{S.deck.forEach(p=>ready(src(p,'d')));P.forEach(p=>ready(src(p,'t')))};(window.requestIdleCallback||setTimeout)(run,{timeout:1500})}
+/* ---------- close-up and the whole collection ---------- */
+track.addEventListener('click',e=>{const a=e.target.closest('.arch');if(!a||a.tagName!=='BUTTON')return;const i=+a.parentElement.dataset.i;
+  if(i!==S.idx){track.scrollTo({left:i*(cw+gap),behavior:'smooth'});return}
+  const p=S.deck[i]; ready(src(p,'d')).then(()=>{$('z-img').src=src(p,'d');$('z-img').alt=p.n+', the detail';$('z-name').textContent=p.n;$('z-line').textContent=p.line;
+    $('zoom').classList.add('on');try{history.pushState({o:'zoom'},'')}catch(e){}})});
+const closeZoom=()=>$('zoom').classList.remove('on');
+$('zx').addEventListener('click',()=>{try{history.back()}catch(e){closeZoom()}});
+const gridHTML=()=>P.map((p,i)=>'<button type="button" data-i="'+i+'"><span class="a"><img alt="" decoding="async" src="'+src(p,'t')+'"></span><span>'+p.n+'</span></button>').join('');
+$('allbtn').addEventListener('click',()=>{if(!$('gg').children.length)$('gg').innerHTML=gridHTML();$('grid').classList.add('on');$('grid').scrollTop=0;try{history.pushState({o:'grid'},'')}catch(e){}});
+$('gx').addEventListener('click',()=>{try{history.back()}catch(e){$('grid').classList.remove('on')}});
+$('gg').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const p=P[+b.dataset.i];
+  $('grid').classList.remove('on'); S.free=true; S.deck=[p];
+  ready(src(p)).then(()=>{buildDeck(); if(!reduce){const a=cards[0].firstElementChild;G.fromTo(a,{opacity:0,y:30},{opacity:1,y:0,duration:1.1,ease:'expo.out'});G.fromTo(a.querySelector('img'),{scale:1.12},{scale:1,duration:1.8,ease:'expo.out',clearProps:'scale'})}})});
+
+/* ---------- back, start again ---------- */
+function restart(){closeZoom();$('grid').classList.remove('on');S.occ=S.mood=null;S.free=false;show('intro')}
+$('again').addEventListener('click',restart);
+function stepBack(){
+  if($('zoom').classList.contains('on')){closeZoom();return}
+  if($('grid').classList.contains('on')){$('grid').classList.remove('on');return}
+  if(busy)return;
+  if(S.screen==='result'){show(S.free&&!S.mood?'intro':'mood',{silent:true});return}
+  if(S.screen==='mood'){show('occasion',{silent:true});return}
+  if(S.screen==='occasion'){show('intro',{silent:true});return}
+}
+$('back').addEventListener('click',()=>{try{history.back()}catch(e){stepBack()}});
+addEventListener('popstate',stepBack);
+addEventListener('keydown',e=>{if(e.key==='Escape')stepBack();if(S.screen==='result'&&(e.key==='ArrowRight'||e.key==='ArrowLeft')){const i=Math.max(0,Math.min(cards.length-1,S.idx+(e.key==='ArrowRight'?1:-1)));track.scrollTo({left:i*(cw+gap),behavior:'smooth'})}});
+try{history.replaceState({s:'intro'},'')}catch(e){}
+
+/* ---------- start ---------- */
+chrome('intro');
+const go=()=>{heroStart(); if(!reduce)G.fromTo(enterEls(scr.intro),{y:22,opacity:0},{y:0,opacity:1,duration:1.2,stagger:.1,ease:'expo.out',delay:.15,clearProps:'transform'})};
+(document.fonts&&document.fonts.ready?timeout(document.fonts.ready,1500):Promise.resolve()).then(go);
+/* checking hooks: ?o=sangeet&m=bold shows that result directly */
+const q=new URLSearchParams(location.search);
+if(q.has('o')){S.occ=q.get('o');S.mood=q.get('m')||'soft';S.deck=match();scr.intro.classList.remove('on');heroStop();S.screen='result';chrome('result');scr.result.classList.add("on");setTimeout(buildDeck,30)}
+if(q.has('s')){scr.intro.classList.remove('on');heroStop();S.screen=q.get('s');scr[S.screen].classList.add('on');chrome(S.screen);if(S.screen==='mood')moodShow()}
+})();
+</script>
+
+</body></html>
